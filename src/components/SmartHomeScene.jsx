@@ -75,7 +75,7 @@ const outerWalls = [
   { position: [3.95, 0.48, 0.38], size: [0.14, 0.82, 6.7] },
 ];
 
-export default function SmartHomeScene() {
+export default function SmartHomeScene({ darkMode }) {
   const [selectedRoomId, setSelectedRoomId] = useState("living");
   const [lights, setLights] = useState({
     living: true,
@@ -94,36 +94,40 @@ export default function SmartHomeScene() {
     }));
   }
 
+  const canvasBg = darkMode ? "#292524" : "#e7e2d7";
+  const baseColor = darkMode ? "#1c1917" : "#d6cec0";
+  const wallColor = darkMode ? "#3a3530" : "#f2ede3";
+
   return (
     <section className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500 dark:text-stone-400">
             Interactive floor plan
           </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-stone-900">
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
             Your home in 3D
           </h2>
         </div>
 
-        <p className="text-sm text-stone-500">
+        <p className="text-sm text-stone-500 dark:text-stone-400">
           Drag to rotate · Scroll to zoom · Select a room
         </p>
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="h-[560px] overflow-hidden border border-stone-300 bg-[#e7e2d7]">
+        <div className="h-[560px] overflow-hidden border border-stone-300 bg-[#e7e2d7] dark:border-stone-700 dark:bg-[#292524]">
           <Canvas
             shadows
             camera={{ position: [9, 9, 11], fov: 42 }}
             aria-label="Interactive three-dimensional model of the smart home"
           >
-            <color attach="background" args={["#e7e2d7"]} />
+            <color attach="background" args={[canvasBg]} />
 
-            <ambientLight intensity={1.35} />
+            <ambientLight intensity={darkMode ? 0.8 : 1.35} />
             <directionalLight
               castShadow
-              intensity={2.2}
+              intensity={darkMode ? 1.5 : 2.2}
               position={[7, 10, 6]}
               shadow-mapSize-width={2048}
               shadow-mapSize-height={2048}
@@ -131,7 +135,7 @@ export default function SmartHomeScene() {
 
             <mesh position={[0, -0.18, 0]} receiveShadow>
               <boxGeometry args={[10.3, 0.12, 8.4]} />
-              <meshStandardMaterial color="#d6cec0" roughness={1} />
+              <meshStandardMaterial color={baseColor} roughness={1} />
             </mesh>
 
             {rooms.map((room) => {
@@ -189,7 +193,7 @@ export default function SmartHomeScene() {
                       center
                       distanceFactor={10}
                     >
-                      <div className="whitespace-nowrap border border-stone-300 bg-[#f5f1e8] px-2.5 py-1.5 text-xs font-semibold text-stone-800 shadow-sm">
+                      <div className="whitespace-nowrap border border-stone-300 bg-[#f5f1e8] px-2.5 py-1.5 text-xs font-semibold text-stone-800 shadow-sm dark:border-stone-600 dark:bg-[#292524] dark:text-stone-200">
                         {room.name}
                       </div>
                     </Html>
@@ -206,18 +210,18 @@ export default function SmartHomeScene() {
                 position={wall.position}
               >
                 <boxGeometry args={wall.size} />
-                <meshStandardMaterial color="#f2ede3" roughness={1} />
+                <meshStandardMaterial color={wallColor} roughness={1} />
               </mesh>
             ))}
 
             <mesh castShadow receiveShadow position={[0, 0.48, 0.7]}>
               <boxGeometry args={[0.14, 0.82, 5.2]} />
-              <meshStandardMaterial color="#f2ede3" roughness={1} />
+              <meshStandardMaterial color={wallColor} roughness={1} />
             </mesh>
 
             <mesh castShadow receiveShadow position={[-1.95, 0.48, 0.7]}>
               <boxGeometry args={[3.8, 0.82, 0.14]} />
-              <meshStandardMaterial color="#f2ede3" roughness={1} />
+              <meshStandardMaterial color={wallColor} roughness={1} />
             </mesh>
 
             <ContactShadows
@@ -238,37 +242,37 @@ export default function SmartHomeScene() {
           </Canvas>
         </div>
 
-        <aside className="border border-stone-300 bg-[#f5f1e8] p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-500">
+        <aside className="border border-stone-300 bg-[#f5f1e8] p-5 dark:border-stone-700 dark:bg-[#231f1c]">
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-500 dark:text-stone-400">
             Selected room
           </p>
 
-          <h3 className="mt-2 text-xl font-semibold tracking-tight text-stone-900">
+          <h3 className="mt-2 text-xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
             {selectedRoom.name}
           </h3>
 
-          <div className="mt-6 space-y-4 border-y border-stone-300 py-5">
+          <div className="mt-6 space-y-4 border-y border-stone-300 py-5 dark:border-stone-700">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-stone-500">Temperature</span>
-              <span className="font-semibold text-stone-800">
+              <span className="text-stone-500 dark:text-stone-400">Temperature</span>
+              <span className="font-semibold text-stone-800 dark:text-stone-200">
                 {selectedRoom.temperature}
               </span>
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <span className="text-stone-500">Connected devices</span>
-              <span className="font-semibold text-stone-800">
+              <span className="text-stone-500 dark:text-stone-400">Connected devices</span>
+              <span className="font-semibold text-stone-800 dark:text-stone-200">
                 {selectedRoom.devices}
               </span>
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <span className="text-stone-500">Main lights</span>
+              <span className="text-stone-500 dark:text-stone-400">Main lights</span>
               <span
                 className={
                   lights[selectedRoomId]
-                    ? "font-semibold text-emerald-700"
-                    : "font-semibold text-stone-600"
+                    ? "font-semibold text-emerald-700 dark:text-emerald-400"
+                    : "font-semibold text-stone-600 dark:text-stone-400"
                 }
               >
                 {lights[selectedRoomId] ? "On" : "Off"}
@@ -279,7 +283,7 @@ export default function SmartHomeScene() {
           <button
             type="button"
             onClick={toggleSelectedRoomLight}
-            className="mt-5 w-full border border-stone-500 bg-stone-800 px-4 py-3 text-sm font-semibold text-stone-50 transition-colors duration-200 hover:bg-stone-700"
+            className="mt-5 w-full border border-stone-500 bg-stone-800 px-4 py-3 text-sm font-semibold text-stone-50 transition-colors duration-200 hover:bg-stone-700 dark:border-stone-500 dark:bg-stone-200 dark:text-stone-900 dark:hover:bg-stone-300"
           >
             Turn lights {lights[selectedRoomId] ? "off" : "on"}
           </button>
@@ -292,8 +296,8 @@ export default function SmartHomeScene() {
                 onClick={() => setSelectedRoomId(room.id)}
                 className={`w-full border px-3 py-2.5 text-left text-sm transition-colors duration-200 ${
                   room.id === selectedRoomId
-                    ? "border-stone-500 bg-stone-200 text-stone-900"
-                    : "border-stone-300 bg-transparent text-stone-600 hover:bg-stone-200/60"
+                    ? "border-stone-500 bg-stone-200 text-stone-900 dark:border-stone-500 dark:bg-stone-700 dark:text-stone-100"
+                    : "border-stone-300 bg-transparent text-stone-600 hover:bg-stone-200/60 dark:border-stone-700 dark:text-stone-400 dark:hover:bg-stone-700/60"
                 }`}
               >
                 {room.name}
